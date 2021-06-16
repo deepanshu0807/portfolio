@@ -1,8 +1,6 @@
-import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:my_portfolio/logic/cubit/theme_cubit.dart';
+import 'package:my_portfolio/theme_logic/cubit/theme_cubit.dart';
 import 'package:my_portfolio/presentation/utils/utility.dart';
-import 'package:my_portfolio/presentation/utils/space.dart';
 import 'package:provider/src/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,28 +10,24 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  double menuH = 100.h;
-  double menuW = 100.h;
-  // bool menuOpen = false;
+  bool isDark = true;
 
-  AnimationController _animationController;
-  bool isPlaying = false;
+  double scrollOffset = 0.0;
+  double section1Value = 0;
+  double section2Value = 0;
+  double section3Value = 0;
+  double section4Value = 0;
+
+  AnimationController goToTopAnimationController;
+  ScrollController _scrollController;
+  ScrollController _workSC;
 
   @override
   void initState() {
     super.initState();
-    _animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 450));
+    //Theme check
+    isDark = AppTheme.currentSystemBrightness == Brightness.dark ? true : false;
   }
-
-// void _handleOnPressed() {
-//   setState(() {
-//     isPlaying = !isPlaying;
-//     isPlaying
-//         ? _animationController.forward()
-//         : _animationController.reverse();
-//   });
-// }
 
   @override
   Widget build(BuildContext context) {
@@ -43,111 +37,35 @@ class _HomePageState extends State<HomePage>
         padding: EdgeInsets.all(20),
         height: screenHeight(context),
         width: screenWidth(context),
-        color: Theme.of(context).backgroundColor,
+        color: theme.backgroundColor,
         child: Stack(
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "This is a sample text",
-                  style: TextStyle(color: theme.primaryColor, fontSize: 50),
-                ),
-                verticalSpaceMassive,
-                TextButton(
-                    onPressed: () {
-                      context.read<ThemeCubit>().setThisTheme(ThemeMode.light);
-                    },
-                    child: Text(
-                      "Light",
-                      style: TextStyle(color: theme.accentColor, fontSize: 30),
-                    )),
-                verticalSpaceLarge,
-                TextButton(
-                    onPressed: () {
-                      context.read<ThemeCubit>().setThisTheme(ThemeMode.dark);
-                    },
-                    child: Text(
-                      "Dark",
-                      style: TextStyle(
-                          color: Theme.of(context).accentColor, fontSize: 30),
-                    ))
-              ],
-            ),
             Positioned(
               top: 20.h,
-              left: 20.w,
-              child: AnimatedContainer(
-                padding: EdgeInsets.all(10),
-                duration: Duration(milliseconds: 300),
-                curve: Curves.easeIn,
-                height: menuH,
-                width: menuW,
+              right: 20.h,
+              child: Container(
+                padding: kPadding10,
                 decoration: BoxDecoration(
+                  shape: BoxShape.circle,
                   color: theme.accentColor,
-                  borderRadius: BorderRadius.circular(15),
                 ),
-                child: Stack(
-                  children: [
-                    Center(
-                      child: ListView(
-                        children: [
-                          verticalSpaceMassive,
-                          verticalSpaceLarge,
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Container(
-                                color: theme.primaryColorLight,
-                                height: 200.h,
-                                width: 200.h,
-                              ),
-                              Container(
-                                color: theme.primaryColorLight,
-                                height: 200.h,
-                                width: 200.h,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                child: InkWell(
+                  onTap: () {
+                    context.read<ThemeCubit>().setThisTheme(
+                        isDark ? ThemeMode.light : ThemeMode.dark);
+                    setState(() {
+                      isDark = !isDark;
+                    });
+                  },
+                  child: Center(
+                    child: Icon(
+                      isDark ? Icons.wb_sunny_outlined : Icons.dark_mode,
+                      color: Colors.black,
                     ),
-                    Positioned(
-                      top: 0,
-                      left: 0,
-                      child: Row(
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              setState(() {
-                                isPlaying = !isPlaying;
-                                isPlaying
-                                    ? _animationController.forward()
-                                    : _animationController.reverse();
-
-                                menuH = isPlaying ? 700.h : 100.h;
-                                menuW = isPlaying ? 700.w : 100.h;
-                              });
-                            },
-                            icon: AnimatedIcon(
-                              icon: AnimatedIcons.menu_close,
-                              progress: _animationController,
-                            ),
-                            iconSize: 50.sp,
-                            color: Colors.black,
-                          ),
-                          horizontalSpaceMedium25,
-                          Text(
-                            "Menu",
-                            style: text50,
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
+            )
           ],
         ),
       ),

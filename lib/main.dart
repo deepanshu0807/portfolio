@@ -7,7 +7,7 @@ import 'package:my_portfolio/presentation/utils/app_theme.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/src/provider.dart';
 
-import 'logic/cubit/theme_cubit.dart';
+import 'theme_logic/cubit/theme_cubit.dart';
 import 'presentation/utils/utility.dart';
 
 void main() async {
